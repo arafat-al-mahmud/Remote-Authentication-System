@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/loginStatusTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="24dp"
+        android:text="status"
+        android:textSize="50dp" />
+
+    <Button
+        android:id="@+id/viewDetailsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/loginStatusTextView"
+        android:layout_below="@+id/loginStatusTextView"
+        android:layout_marginTop="14dp"
+        android:text="View your details" />
+    
+    <LinearLayout android:id="@+id/detailsLayout"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/viewDetailsButton">
+        
+        <TextView
+        android:id="@+id/userNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/viewDetailsButton"
+        android:layout_below="@+id/viewDetailsButton"
+        android:layout_marginTop="44dp"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/emailTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/userNameTextView"
+        android:layout_below="@+id/userNameTextView"
+        android:layout_marginTop="40dp"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/passwordTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/emailTextView"
+        android:layout_below="@+id/emailTextView"
+        android:layout_marginTop="44dp"
+        android:text="TextView" />
+        
+    </LinearLayout>
+
+    
+
+</RelativeLayout>

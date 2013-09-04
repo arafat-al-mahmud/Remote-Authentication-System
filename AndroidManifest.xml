@@ -23,6 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.arafat.resttest.loginStatusActivity"/>
+         <activity
+            android:name="com.arafat.resttest.SignUpActivity"/>
     </application>
 
 </manifest>

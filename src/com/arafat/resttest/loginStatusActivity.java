@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -14,84 +15,74 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.view.Menu;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
-	Button loginButton;
-	Button signUpButton;
+public class loginStatusActivity extends Activity {
+	TextView loginStatusTextView;
+	Button viewDetails;
 	ProgressDialog pd;
 	Context context;
-	
-	EditText loginEditText;
-	EditText passwordEditText;
+	LinearLayout detailsLayout;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.acitivity_home);
+		
+		setContentView(R.layout.login_status_activity);
 		
 		context=this;
 		
-		loginEditText=(EditText)findViewById(R.id.loginEditText);
-		passwordEditText=(EditText)findViewById(R.id.loginPasswordEditText);
-		loginButton=(Button)findViewById(R.id.loginButton);
-		signUpButton=(Button)findViewById(R.id.signUpButton);
-		loginButton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				LoginAsyncTask apitask=new LoginAsyncTask();
-				String[] loginCredentials={loginEditText.getText().toString()
-						,passwordEditText.getText().toString()};
-				apitask.execute(loginCredentials);
-			}
-		});
+		detailsLayout=(LinearLayout)findViewById(R.id.detailsLayout);
+		detailsLayout.setVisibility(LinearLayout.GONE);
 		
-		signUpButton.setOnClickListener(new View.OnClickListener() {
+		loginStatusTextView=(TextView)findViewById(R.id.loginStatusTextView);
+		
+		loginStatusTextView.setText("Successful !");
+		
+		viewDetails=(Button)findViewById(R.id.viewDetailsButton);
+		viewDetails.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				Intent intent=new Intent(getApplicationContext(),SignUpActivity.class);
-				startActivity(intent);
-				
+				Intent intent=getIntent();
+				String[] userName={intent.getStringExtra("userName")};
+				ViewDetailsAsyncTask viewDetailsAsyncTask=new ViewDetailsAsyncTask();
+				viewDetailsAsyncTask.execute(userName);
 			}
 		});
 	}
-
-	class LoginAsyncTask extends AsyncTask<String, String, String>
-	{
+	
+	class ViewDetailsAsyncTask extends AsyncTask<String, String, String>{
 
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
 			pd = new ProgressDialog(context);
-			pd.setTitle("Loggin in...");
+			pd.setTitle("Retrieving Data...");
 			pd.setMessage("Please wait...");
 			pd.setCancelable(false);
 			pd.setIndeterminate(true);
 			pd.show();
 		}
+		
 		@Override
-		protected String doInBackground(String... credentials) {
-			
+		protected String doInBackground(String... userName) {
 			HttpClient client=new DefaultHttpClient();
-			String userName=credentials[0];
-			String password=credentials[1];
-			String loginRequest="http://monir.dreamchasersoft.com/mobile/index.php/api/login/name/"+
-			userName+"/password/"+password+"/format/json/";
-			HttpGet request=new HttpGet(loginRequest);
+			String UserName=userName[0];
+			String detailsRequest="http://monir.dreamchasersoft.com/mobile/index.php/api/user/name/"+
+			UserName+"/format/json/";
+			HttpGet request=new HttpGet(detailsRequest);
 			try {
 				HttpResponse response=client.execute(request);
 			//	HttpStatus status=(HttpStatus) response.getStatusLine();
@@ -119,7 +110,6 @@ public class MainActivity extends Activity {
 				e.printStackTrace();
 			}
 			return null;
-			
 		}
 		
 		@Override
@@ -132,35 +122,25 @@ public class MainActivity extends Activity {
 			response=result;
 			//convert string to JsonObject
 			try {
-				JSONObject loginSuccess=new JSONObject(response);
+				JSONArray jsonArray=new JSONArray(response);
 				
-				String message=loginSuccess.getString("status");
+				JSONObject jsonObject=jsonArray.getJSONObject(0);
 				
-				if(message.equals("success"))
-				{
-					Intent intent=new Intent(getApplicationContext(),loginStatusActivity.class);
-					intent.putExtra("userName", loginEditText.getText().toString());
-					startActivity(intent);
-				}
-				else{
-					
-					Toast.makeText(getApplicationContext(), "Login failed, try again!", Toast.LENGTH_LONG).show();
-				}
+				TextView userNametv=(TextView) findViewById(R.id.userNameTextView);
+				TextView emailtv=(TextView)findViewById(R.id.emailTextView);
+				TextView passwordtv=(TextView)findViewById(R.id.passwordTextView);
+				
+				userNametv.setText("User Name: "+jsonObject.getString("name"));
+				emailtv.setText("Email: "+jsonObject.getString("email"));
+				passwordtv.setText("Password: "+jsonObject.getString("password"));
+				
+				detailsLayout.setVisibility(LinearLayout.VISIBLE);
 				
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		
 	}
-	
-	
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
 }
